@@ -1,0 +1,45 @@
+- name: installed PostgreSQL Repository
+  yum: name={{ pg_repo }} state=installed
+
+- name: installed postgresql
+  yum: name={{ item }} state=installed
+  with_items: pg_pkgs
+
+- name: init db
+  command: /usr/pgsql-9.4/bin/postgresql94-setup initdb
+           creates={{ pg_conf }}
+  register: isinit
+
+- name: setted remote access in postgresql.conf listen addresss
+  lineinfile: dest={{ pg_conf }}
+              regexp="^#?\s*(listen_addresses = )\'localhost\'(.*)"
+              line="\1\'*\'\2"
+              backrefs=yes
+  notify: reload postgresql
+
+- name: setted remote access in postgresql.conf listen port
+  lineinfile: dest={{ pg_conf }}
+              regexp="^#?\s*(port = 5432.*)"
+              line="\1"
+              backrefs=yes
+  notify: reload postgresql
+
+- name: setted remote access in pg_hba.conf
+  lineinfile: dest={{ pg_hba }}
+              line="host\tall\t\tall\t\t{{ network }}\t{{ netmask }}\tmd5"
+              insertafter=EOF
+  notify: reload postgresql
+
+- name: started postgresql
+  service: name={{ pg_service }}
+           state=started
+           enabled=yes
+
+- name: setted password postgres
+  command: echo "{{ pg_password }}" | passwd --stdin postgres
+  when: isinit|changed
+
+- name: setted password postgres in db
+  command: psql -c "alter user postgres with password '{{ pg_password }}';"
+  sudo_user: postgres
+  when: isinit|changed

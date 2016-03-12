@@ -1,0 +1,20 @@
+- name: Install Docker
+  yum: name=docker state=latest
+
+- name: Create a docker group
+  group: name=docker state=present
+
+- name: Add user to Docker group
+  user: name=deploy group=docker
+
+- name: install iptables
+  yum: name=iptables-services state=installed
+
+- name: enable iptables
+  service: name=iptables state=started enabled=yes
+
+- name: open port 5432
+  command: iptables -I INPUT 1 -p tcp --dport 5432 -j ACCEPT
+
+- name: open port 80
+  command: iptables -I INPUT 1 -p tcp --dport 80 -j ACCEPT

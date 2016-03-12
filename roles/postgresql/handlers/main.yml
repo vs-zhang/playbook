@@ -1,0 +1,2 @@
+- name: reload postgresql
+  service: name={{ pg_service }} state=reloaded enabled=yes

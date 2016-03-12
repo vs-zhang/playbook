@@ -1,0 +1,11 @@
+pg_password: postgres
+docker_username: vszhang
+docker_password: 711624tzm
+docker_email: vincentzhang1209@gmail.com
+SECRET_KEY_BASE: e158cb261e5076f35e5369fbe9ad9d1a5c9d9f7b0c1edeefbb2654918570cd5e7edbb3d1e8572760bc29d7258893751dce831d1da1e6caa7de9d3c8be94b287c
+JWT_KEY_BASE: 31d1da1e6caa7de9d3c8be94b287c258893751dce8
+DB_NAME: api_prod
+DB_USERNAME: postgres
+DB_PASSWORD: postgres
+DB_ADDR: 52.71.196.3
+DB_PORT: 5432

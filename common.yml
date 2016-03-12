@@ -1,0 +1,6 @@
+---
+- hosts: api
+  remote_user: deploy
+  sudo: yes
+  roles:
+    - common

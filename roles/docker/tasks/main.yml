@@ -1,0 +1,32 @@
+- name: Make sure Docker is running
+  service: name=docker state=running enabled=yes
+
+- name: login to registry
+  command: docker login -e {{ docker_email }} -p {{ docker_password }} -u {{ docker_username}}
+
+- name: pulled container
+  command: docker pull vszhang/api:latest
+
+- name: stop api container
+  command: docker stop api
+
+- name: rm api container
+  command: docker rm api
+
+- name: start api container
+  command: docker run --name api -p 80:3000
+    -e RAILS_ENV='production'
+    -e SECRET_KEY_BASE='{{ SECRET_KEY_BASE }}'
+    -e JWT_KEY_BASE='{{ JWT_KEY_BASE }}'
+    -e DB_NAME='{{ DB_NAME }}'
+    -e DB_ADDR='{{ DB_ADDR }}'
+    -e DB_PORT='{{ DB_PORT }}'
+    -e DB_USERNAME='{{ DB_USERNAME }}'
+    -e DB_PASSWORD='{{ DB_PASSWORD }}'
+    -d vszhang/api:latest
+
+- name: create db
+  command: docker exec -it api rails db:create
+
+- name: run migrate
+  command: docker exec -it api rails db:migrate

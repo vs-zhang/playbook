@@ -1,0 +1,6 @@
+---
+- include: common.yml
+- include: postgresql.yml
+- include: docker.yml
+
+
